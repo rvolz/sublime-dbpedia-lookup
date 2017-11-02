@@ -24,12 +24,12 @@ After that ...
 
 By default the plugin will use the public endpoint for the DBpedia Lookup service at http://lookup.dbpedia.org. However, it is possible to also configure a _local_ endpoint. The DBpedia project provides a [Docker image](https://hub.docker.com/r/dbpedia/lookup/) that makes it possible to run the service on your own machine or elsewhere.
 
-To use the local endpoint configure the use preferences accordingly:
+To use the local endpoint configure the user preferences accordingly:
 
 * change the setting _default_server_ to _local_. The default is _remote_.
 * change the setting _dbpedia_lookup_server_local_ to the address/port of your machine. The default is _http://localhost:1111_, which is the address the Docker image uses.
 
-## Licence
+## License
 
 This plugin is freely available under the [MIT license](LICENSE).
 
