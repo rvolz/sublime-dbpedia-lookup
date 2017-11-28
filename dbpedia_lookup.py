@@ -1,11 +1,11 @@
 import sublime
 import sublime_plugin
 from urllib.request import urlopen, Request, HTTPError, URLError
+from urllib.parse import urlencode
 import json
 import io
 import logging, pprint
 
-logging.basicConfig(level=logging.WARNING, format="[%(asctime)s - %(levelname)-8s - %(name)s] %(message)s")
 logger = logging.getLogger('DBpedia Lookup')
 
 class DbpediaLookupCommand(sublime_plugin.TextCommand):
@@ -22,7 +22,7 @@ class DbpediaLookupCommand(sublime_plugin.TextCommand):
 		logger.info('DBpedia: looking up '+lookup_item)
 		results = self.lookup(lookup_item)
 		if results == None or not results['results']:
-			logger.warning('DBpedia: no results')
+			logger.warning('DBpedia Lookup: no results')
 			return
 		contents = self.output(results, lookup_item)
 		f = self.get_view()
@@ -67,14 +67,15 @@ class DbpediaLookupCommand(sublime_plugin.TextCommand):
 			return dlv
 
 	def lookup(self, name):
-		settings = sublime.load_settings('dbpedia-lookup.sublime-settings')
+		settings = sublime.load_settings('dbpedia_lookup.sublime-settings')
 		if settings.get('default_server', 'remote') == 'remote':
 			host = settings.get('dbpedia_lookup_server_remote', 'http://lookup.dbpedia.org')
 		else:
-			host = settings.get('dbpedia_lookup_server_local')
+			host = settings.get('dbpedia_lookup_server_local', '')
 		try:
-			headers = {'Accept': 'application/json'}	
-			req = Request(host+'/api/search/KeywordSearch?QueryClass=&MaxHits=5&QueryString='+name, None, headers)
+			headers = {'Accept': 'application/json'}
+			params = f = { 'QueryClass' : '', 'MaxHits' : 5, 'QueryString' : name }
+			req = Request(host+'/api/search/KeywordSearch?'+urlencode(params), None, headers)
 			resp = urlopen(req)
 			s = resp.read().decode('utf-8')
 			return json.loads(s)
