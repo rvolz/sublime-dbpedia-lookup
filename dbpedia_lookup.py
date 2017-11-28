@@ -15,14 +15,13 @@ class DbpediaLookupCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
 		sels = self.view.sel()
 		if sels[0].empty(): # no selection, try to find the surronding word
-			lookup_region = self.view.word(sels[0])
-			lookup_item = self.view.substr(lookup_region)
+			lookup_item = self.view.substr(self.view.word(sels[0].begin()))
 		else: # selection found
 			lookup_item = self.view.substr(sels[0])	
 		logger.info('DBpedia: looking up '+lookup_item)
 		results = self.lookup(lookup_item)
 		if results == None or not results['results']:
-			logger.warning('DBpedia Lookup: no results')
+			logger.warning('DBpedia Lookup: no results for "'+lookup_item+'"')
 			return
 		contents = self.output(results, lookup_item)
 		f = self.get_view()
